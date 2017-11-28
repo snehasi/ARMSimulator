@@ -32,12 +32,13 @@ public class Main {
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 		//hexTobinary(instruct.substring(2,instruct.length())+"checkkk");
 	}
-	public static int getopcode() {
+	public static int getcond() {
 		String command2="";
 		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
 		int num2=binTOdecimal(command2);
 		return num2;
 	}
+	
 	public static void decode() {
 		int[] binary=hexTobinary(instruct.substring(2));
 		String command="";
@@ -74,7 +75,7 @@ public class Main {
 	public static void branchCondition() {
 	
 		System.out.println("branch condition");
-		int num2=getopcode();
+		int num2=getcond();
 		if(num2==0) {
 			System.out.println("Operation is BEQ\n");
 		}
