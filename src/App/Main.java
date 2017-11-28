@@ -35,17 +35,14 @@ public class Main {
 
 	public static void decode() {
 		int[] binary=hexTobinary(instruct.substring(2));
-		String command="";
-		String command2="";
+		String command="";		
 		command=binary[binary.length-1-27]+""+binary[binary.length-1-26]+"";
-		//System.out.println(command+" cc ");
-		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
+		//System.out.println(command+" cc ");		
 		int num=binTOdecimal(command);
 //		for(int i=0;i<binary.length;i++) {
 //			System.out.println(binary[i] +"checking array");
 //		}
-		//System.out.println(binary[binary.length-1-27]+" "+binary[binary.length-1-26]+" test ");
-		int num2=binTOdecimal(command2);
+		//System.out.println(binary[binary.length-1-27]+" "+binary[binary.length-1-26]+" test ");		
 		//System.out.println(num+" num");
 		if(num==0) {
 			dataProcess();
@@ -54,8 +51,8 @@ public class Main {
 			dataStore();
 		}
 		else if(num==2){
-			//System.out.println("ooo");
-			branchCondition(num2);
+			//System.out.println("testing");
+			branchCondition(binary);
 		}
 		
 		
@@ -66,7 +63,11 @@ public class Main {
 	public static void dataStore() {
 		System.out.println("dataStore");
 	}
-	public static void branchCondition(int num2) {
+	public static void branchCondition(int[] binary) {
+		String command2="";
+		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
+		//num2 is the opcode
+		int num2=binTOdecimal(command2);
 		System.out.println("branch condition");
 		if(num2==0) {
 			System.out.println("Operation is BEQ\n");
