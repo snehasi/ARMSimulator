@@ -1,3 +1,4 @@
+package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -52,7 +53,7 @@ public class Main {
 		int decimaloffset=binTOdecimal(offset);
 		return decimaloffset;
 	}
-	public static void decode() {
+	public void decode() {
 		hexTobinary(instruct.substring(2));
 		String command="";
 		command=Integer.toString(binary[binary.length-1-27])+Integer.toString(binary[binary.length-1-26]);
@@ -67,14 +68,22 @@ public class Main {
 			branchCondition();
 		}
 	}
-	public static void dataProcess() {
+	public void dataProcess() {
 		System.out.println("dataProcess");
 	}
-	public static void dataStore() {
-		if()
+	public void dataStore() {
+		int offset=getlsoffset();
+		int load=binary[11];
+		//TODO FIND RL AND RD
+		if(load==1){
+			System.out.println("Operation is Load");
+		}
+		else{
+			System.out.println("Operation is Store");
+		}
 		System.out.println("dataStore");
 	}
-	public static void branchCondition() {
+	public void branchCondition() {
 	
 		System.out.println("branch condition");
 		int num2=getcond();
@@ -112,7 +121,15 @@ public class Main {
 		return decimal;
 
 	}
+	public void memory(int x,int y){
 
+	}
+	public void writeback(int x,int y){
+
+	}
+	public void execute(){
+
+	}
 	public static void hexTobinary(String s) {
 		String bin = "";
 		System.out.println(s);
