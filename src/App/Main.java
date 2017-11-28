@@ -44,11 +44,18 @@ public class Main {
 		int num2=binTOdecimal(command2);
 		return num2;
 	}
+	public int getlsoffset(){//getting load store offset
+		String offset="";
+		for(int i=31;i>19;i--){
+			offset=Integer.toString(binary[i]);
+		}
+		int decimaloffset=binTOdecimal(offset);
+		return decimaloffset;
+	}
 	public static void decode() {
 		hexTobinary(instruct.substring(2));
 		String command="";
-		String offset="";
-		command=binary[binary.length-1-27]+""+binary[binary.length-1-26]+"";
+		command=Integer.toString(binary[binary.length-1-27])+Integer.toString(binary[binary.length-1-26]);
 		int num=binTOdecimal(command);
 		if(num==0) {
 			dataProcess();
@@ -64,6 +71,7 @@ public class Main {
 		System.out.println("dataProcess");
 	}
 	public static void dataStore() {
+		if()
 		System.out.println("dataStore");
 	}
 	public static void branchCondition() {
