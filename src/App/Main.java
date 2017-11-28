@@ -17,7 +17,8 @@ public class Main {
 		BufferedReader in = null;
 		String s = null;
 		try {
-			in = new BufferedReader(new FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
+//			in = new BufferedReader(new FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
+			in = new BufferedReader(new FileReader("D:\\i.MEM"));
 			s = in.readLine();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -30,7 +31,6 @@ public class Main {
 			instruct = instruct + s.charAt(i);
 		}
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
-		//hexTobinary(instruct.substring(2,instruct.length())+"checkkk");
 	}
 	public static int getcond() {
 		String command2="";
@@ -38,21 +38,18 @@ public class Main {
 		int num2=binTOdecimal(command2);
 		return num2;
 	}
-	
+	public static int getOpcode() {
+		String command2="";
+		command2=binary[binary.length-1-24]+binary[binary.length-1-23]+binary[binary.length-1-22]+binary[binary.length-1-21]+"";
+		int num2=binTOdecimal(command2);
+		return num2;
+	}
 	public static void decode() {
-		int[] binary=hexTobinary(instruct.substring(2));
+		hexTobinary(instruct.substring(2));
 		String command="";
-		//satyam
 		String offset="";
 		command=binary[binary.length-1-27]+""+binary[binary.length-1-26]+"";
-		//System.out.println(command+" cc ");		
 		int num=binTOdecimal(command);
-//		for(int i=0;i<binary.length;i++) {
-//			System.out.println(binary[i] +"checking array");
-//		}
-		//System.out.println(binary[binary.length-1-27]+" "+binary[binary.length-1-26]+" test ");
-		
-		//System.out.println(num+" num");
 		if(num==0) {
 			dataProcess();
 		}
@@ -60,11 +57,8 @@ public class Main {
 			dataStore();
 		}
 		else if(num==2){
-			//System.out.println("ooo");
 			branchCondition();
 		}
-		
-		
 	}
 	public static void dataProcess() {
 		System.out.println("dataProcess");
@@ -111,8 +105,7 @@ public class Main {
 
 	}
 
-	public static int[] hexTobinary(String s) {
-		//int[] binary = new int[32];
+	public static void hexTobinary(String s) {
 		String bin = "";
 		System.out.println(s);
 		for (int i = 0; i < s.length(); i++) {
@@ -154,7 +147,5 @@ public class Main {
 		for (int i = 0; i < bin.length(); i++) {
 			binary[i] = bin.charAt(i)-'0';
 		}
-		return binary;
-
 	}
 }
