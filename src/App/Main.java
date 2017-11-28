@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class simulator {
+public class Main {
 	private static char[] instruction = new char[10];
 	private static String address = "";
 	private static String instruct = "";
@@ -17,7 +17,7 @@ public class simulator {
 		BufferedReader in = null;
 		String s = null;
 		try {
-			in = new BufferedReader(new FileReader("D:\\i.MEM"));
+			in = new BufferedReader(new FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
 			s = in.readLine();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -30,13 +30,23 @@ public class simulator {
 			instruct = instruct + s.charAt(i);
 		}
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
+		//hexTobinary(instruct.substring(2,instruct.length())+"checkkk");
 	}
 
 	public static void decode() {
 		int[] binary=hexTobinary(instruct.substring(2));
 		String command="";
-		command=binary[binary.length-1-27]+binary[binary.length-1-26]+"";
+		String command2="";
+		command=binary[binary.length-1-27]+""+binary[binary.length-1-26]+"";
+		//System.out.println(command+" cc ");
+		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
 		int num=binTOdecimal(command);
+//		for(int i=0;i<binary.length;i++) {
+//			System.out.println(binary[i] +"checking array");
+//		}
+		//System.out.println(binary[binary.length-1-27]+" "+binary[binary.length-1-26]+" test ");
+		int num2=binTOdecimal(command2);
+		//System.out.println(num+" num");
 		if(num==0) {
 			dataProcess();
 		}
@@ -44,7 +54,8 @@ public class simulator {
 			dataStore();
 		}
 		else if(num==2){
-			branchCondition();
+			//System.out.println("ooo");
+			branchCondition(num2);
 		}
 		
 		
@@ -55,8 +66,29 @@ public class simulator {
 	public static void dataStore() {
 		System.out.println("dataStore");
 	}
-	public static void branchCondition() {
+	public static void branchCondition(int num2) {
 		System.out.println("branch condition");
+		if(num2==0) {
+			System.out.println("Operation is BEQ\n");
+		}
+		else if(num2==1) {
+			System.out.println("Operation is BNE\n");
+		}
+		else if(num2==11) {
+			System.out.println("Operation is BLT\n");
+		}
+		else if(num2==13) {
+			System.out.println("Operation is BLE\n");
+		}
+		else if(num2==12) {
+			System.out.println("Operation is BGT\n");
+		}
+		else if(num2==10) {
+			System.out.println("Operation is BGE\n");
+		}
+		else if(num2==14) {
+			System.out.println("Operation is BAL\n");
+		}
 	}
 	public static int binTOdecimal(String s) {
 		int decimal = 0;
@@ -112,7 +144,7 @@ public class simulator {
 		}
 		System.out.println(bin);
 		for (int i = 0; i < bin.length(); i++) {
-			binary[i] = bin.charAt(i);
+			binary[i] = bin.charAt(i)-'0';
 		}
 		return binary;
 
