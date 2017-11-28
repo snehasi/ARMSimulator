@@ -70,6 +70,109 @@ public class Main {
 	}
 	public void dataProcess() {
 		System.out.println("dataProcess");
+		int immediate = binary[6];
+		int code = getOpcode();
+		String cmd1 = Integer.toString(binary[binary.length - 1 - 19])
+				+ Integer.toString(binary[binary.length - 1 - 18]) + Integer.toString(binary[binary.length - 1 - 17])
+				+ Integer.toString(binary[binary.length - 1 - 16]);
+		int operand1=binTOdecimal(cmd1);
+		String cmd2 = Integer.toString(binary[binary.length - 1 - 15])
+				+ Integer.toString(binary[binary.length - 1 - 14]) + Integer.toString(binary[binary.length - 1 - 13])
+				+ Integer.toString(binary[binary.length - 1 - 12]);
+		int destination=binTOdecimal(cmd2);
+		System.out.println(immediate+" "+code);
+		if (immediate == 0) {
+			String cmd3 = Integer.toString(binary[binary.length - 4])
+					+ Integer.toString(binary[binary.length - 3]) + Integer.toString(binary[binary.length - 2])
+					+ Integer.toString(binary[binary.length - 1]);
+			int operand2=binTOdecimal(cmd3);
+			if (code == 0) {
+				System.out.println("Operation decoded is AND, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==1) {
+				System.out.println("Operation decoded is XOR, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==2) {
+				System.out.println("Operation decoded is SUB, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==3) {
+				System.out.println("Operation decoded is RSB, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==4) {
+				System.out.println("Operation decoded is ADD, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==5) {
+				System.out.println("Operation decoded is ADC, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==6) {
+				System.out.println("Operation decoded is SBC, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==10) {
+				System.out.println("Operation decoded is CMP, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==11) {
+				System.out.println("Operation decoded is CMN, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==12) {
+				System.out.println("Operation decoded is ORR, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==13) {
+				System.out.println("Operation decoded is MOV, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==14) {
+				System.out.println("Operation decoded is BIC, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==15) {
+				System.out.println("Operation decoded is MVN, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
+			}
+		} else {
+			String cmd3 = Integer.toString(binary[binary.length - 8])
+					+ Integer.toString(binary[binary.length - 7]) + Integer.toString(binary[binary.length - 6])
+					+ Integer.toString(binary[binary.length - 5])+Integer.toString(binary[binary.length - 4])
+					+ Integer.toString(binary[binary.length - 3]) + Integer.toString(binary[binary.length - 2])
+					+ Integer.toString(binary[binary.length - 1]);
+			int operand2=binTOdecimal(cmd3);
+			if (code == 0) {
+				System.out.println("Operation decoded is AND, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==1) {
+				System.out.println("Operation decoded is XOR, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==2) {
+				System.out.println("Operation decoded is SUB, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==3) {
+				System.out.println("Operation decoded is RSB, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==4) {
+				System.out.println("Operation decoded is ADD, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==5) {
+				System.out.println("Operation decoded is ADC, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==6) {
+				System.out.println("Operation decoded is SBC, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==10) {
+				System.out.println("Operation decoded is CMP, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==11) {
+				System.out.println("Operation decoded is CMN, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==12) {
+				System.out.println("Operation decoded is ORR, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==13) {
+				System.out.println("Operation decoded is MOV, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==14) {
+				System.out.println("Operation decoded is BIC, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			else if(code==15) {
+				System.out.println("Operation decoded is MVN, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
+			}
+			
+		}
 	}
 	public void dataStore() {
 		int offset=getlsoffset();
