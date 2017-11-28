@@ -1,3 +1,4 @@
+package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,7 +8,7 @@ public class Main {
 	private static char[] instruction = new char[10];
 	private static String address = "";
 	private static String instruct = "";
-
+	private static int[] binary=new int[32];
 	public static void main(String[] args) throws IOException {
 		fetch();
 		decode();
@@ -37,6 +38,7 @@ public class Main {
 		int[] binary=hexTobinary(instruct.substring(2));
 		String command="";
 		String command2="";
+		String offset="";
 		command=binary[binary.length-1-27]+""+binary[binary.length-1-26]+"";
 		//System.out.println(command+" cc ");
 		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
@@ -104,7 +106,7 @@ public class Main {
 	}
 
 	public static int[] hexTobinary(String s) {
-		int[] binary = new int[32];
+		//int[] binary = new int[32];
 		String bin = "";
 		System.out.println(s);
 		for (int i = 0; i < s.length(); i++) {
