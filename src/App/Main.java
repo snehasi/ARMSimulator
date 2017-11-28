@@ -1,26 +1,19 @@
-package App;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.Stack;
-public class Main {
-	static String ins;
-	static String addr;
+
+public class simulator {
 	private static char[] instruction = new char[10];
 	private static String address = "";
 	private static String instruct = "";
-	public static void main(String[] args) throws FileNotFoundException {
+
+	public static void main(String[] args) throws IOException {
 		fetch();
 		decode();
-		execute();
-		mem();
-		writeback();
 	}
-	private static void fetch() throws FileNotFoundException {
-// 		readfile();//reading all instructions make a while loop for reading nstruction one by one
+
+	public static void fetch() throws IOException {
 		BufferedReader in = null;
 		String s = null;
 		try {
@@ -38,24 +31,32 @@ public class Main {
 		}
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
-	private static void writeback() {
-		// TODO Auto-generated method stub
+
+	public static void decode() {
+		int[] binary=hexTobinary(instruct.substring(2));
+		String command="";
+		command=binary[binary.length-1-27]+binary[binary.length-1-26]+"";
+		int num=binTOdecimal(command);
+		if(num==0) {
+			dataProcess();
+		}
+		else if(num==1) {
+			dataStore();
+		}
+		else if(num==2){
+			branchCondition();
+		}
+		
 		
 	}
-
-	private static void mem() {
-		// TODO Auto-generated method stub
-		
+	public static void dataProcess() {
+		System.out.println("dataProcess");
 	}
-
-	private static void execute() {
-		// TODO Auto-generated method stub
-		
+	public static void dataStore() {
+		System.out.println("dataStore");
 	}
-
-	private static void decode() {
-		// TODO Auto-generated method stub
-		
+	public static void branchCondition() {
+		System.out.println("branch condition");
 	}
 	public static int binTOdecimal(String s) {
 		int decimal = 0;
@@ -70,9 +71,10 @@ public class Main {
 
 	}
 
-	public static int[] HexToDecimal(String s) {
+	public static int[] hexTobinary(String s) {
 		int[] binary = new int[32];
 		String bin = "";
+		System.out.println(s);
 		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) == '0') {
 				bin = bin + "0000";
@@ -108,36 +110,11 @@ public class Main {
 				bin = bin + "1111";
 			}
 		}
+		System.out.println(bin);
 		for (int i = 0; i < bin.length(); i++) {
 			binary[i] = bin.charAt(i);
 		}
 		return binary;
 
-	}
-	
-	public void exit() {
-		System.exit(0);
-	}
-	private static void readfile() throws FileNotFoundException {
-		BufferedReader in = null;
-		try {
-		    in = new BufferedReader(new FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
-		    String read = null;
-		    while ((read = in.readLine()) != null) {
-		        String[] splited = read.split("\\s+");
-		        addr = splited[0];
-		        ins = splited[1];
-		        System.out.println("Fetch instruction " + ins + " from address " + addr );
-		    }
-		} catch (IOException e) {
-		    System.out.println("error encountered: " + e);
-		    e.printStackTrace();
-		} finally {
-		    try {
-		        in.close();
-		    } catch (Exception e) {
-		    }
-		}
-		
 	}
 }
