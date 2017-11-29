@@ -16,11 +16,13 @@ public class Main {
 	private static int operand2 = 0;
 	private static int destination = 0;
 	private static int[] R = new int[16];
+	private static int iii=0;
+	private static long[] memory=new long[8000];
 	/*
 	 * main memory->we are taking the indices from 0xi as i giving them contiguous
 	 * allocations in our implementaion now we have to increase R[15] by 4
 	 */
-	private static long[] memory = new long[4000];
+	//private static long[] memory = new long[4000];
 
 	public static void main(String[] args) throws IOException {
 		int count = initialise();
@@ -29,7 +31,9 @@ public class Main {
 				fetch(i);
 				R[15] += 4;
 				decode();
+				execute();
 				Memory();
+				writeback();
 			}
 		}
 	}
@@ -46,7 +50,7 @@ public class Main {
 				String[] s2 = s.split(" ");
 				location = Integer.parseInt(s2[0].substring(2), 16);
 				memory[location] = Integer.parseUnsignedInt(s2[1].substring(2), 16);
-				System.out.println(memory[location]);
+				//System.out.println(memory[location]);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -59,7 +63,7 @@ public class Main {
 
 	public static void fetch(int location) throws IOException {
 		long y = memory[location];
-		System.out.println(y);
+		//System.out.println(y);
 		address = Integer.toString(location);
 		address = Integer.toHexString(Integer.parseInt(address));
 		address = "0x" + address;
@@ -86,6 +90,7 @@ public class Main {
 	}
 
 	public static void decode() {
+		System.out.println("Decode starts");
 		hexTobinary(instruct.substring(2));
 		String command = "";
 		String offset = "";
@@ -97,6 +102,11 @@ public class Main {
 			dataStore();
 		} else if (num == 2) {
 			branchCondition();
+		}
+		else if(num==3) {
+			System.out.println("Exit the program.");
+			resetval();
+			System.exit(0);
 		}
 	}
 
@@ -121,7 +131,7 @@ public class Main {
 				+ Integer.toString(binary[binary.length - 1 - 14]) + Integer.toString(binary[binary.length - 1 - 13])
 				+ Integer.toString(binary[binary.length - 1 - 12]);
 		destination = binTOdecimal(cmd2);
-		System.out.println(immediate + " " + code);
+		//System.out.println(immediate + " " + code);
 		if (immediate == 0) {
 			String cmd3 = Integer.toString(binary[binary.length - 4]) + Integer.toString(binary[binary.length - 3])
 					+ Integer.toString(binary[binary.length - 2]) + Integer.toString(binary[binary.length - 1]);
@@ -493,6 +503,47 @@ public class Main {
 			}
 		}
 	}
+	
+	public static void writeback() {
+		System.out.println("Writeback starts");
+		hexTobinary(instruct.substring(2));
+		String command3 = "";
+		String offset3 = "";
+		command3 = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
+		int num3 = binTOdecimal(command3);
+		int code3=getOpcode();
+		if(((num3==0)&&(code3!=10))||(num3==1)&&(code3==25)) {			
+				R[destination]=result;
+		 		System.out.println("Write "+result+" to "+destination);	
+		 		}
+		 		else if((num3==1)&&(code3==24)) {			
+		 			iii=R[destination];
+		 			System.out.println("Write "+iii+" to memory.");
+		 			
+		 		}
+		 		else if(num3==2||((num3==0)&&(code3==10))) {
+		 			System.out.println("No writeback.");
+		 		}
+	}
+	public static void resetval() {
+		 		for(int i=0;i<10;i++) {
+		 			instruction[i]='0';
+		 		}
+		 		for(int j=0;j<32;j++) {
+		 			binary[j]=0;
+		 		}
+		 		for(int i=0;i<16;i++) {
+		 			R[i]=0;
+		 		}
+		 		operand1=operand2=destination=iii=result=0;
+		 		address=instruct="";
+		 		flagEqual=flagGreater=flagSmaller=false;
+		 		for(int i=0;i<8000;i++) {
+		 			memory[i]=0;
+		 		}
+		 		
+		 		
+		 	}
 
 	public static int binTOdecimal(String s) {
 		int decimal = 0;
@@ -508,7 +559,7 @@ public class Main {
 
 	public static void hexTobinary(String s) {
 		String bin = "";
-		System.out.println(s);
+		//System.out.println(s);
 		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) == '0') {
 				bin = bin + "0000";
@@ -544,7 +595,7 @@ public class Main {
 				bin = bin + "1111";
 			}
 		}
-		System.out.println(bin);
+		//System.out.println(bin);
 		for (int i = 0; i < bin.length(); i++) {
 			binary[i] = bin.charAt(i) - '0';
 		}
