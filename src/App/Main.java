@@ -49,7 +49,7 @@ public class Main {
 		else
 			address="0x"+address;
 		instruct =Integer.toHexString(y);
-		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
+		System.out.println("FETCH: Fetch instruction 0x" + instruct + " from address " + address);
 	}
 	public static int getcond() {
 		String command2 = "";
@@ -200,16 +200,36 @@ public class Main {
 		System.out.println("dataStore");
 		int offset=getlsoffset();
 		int load=binary[11];
-		//TODO FIND RL AND RD
+		int lsoffset=getlsoffset();
+		String oset="";
+		if(lsoffset<=15){
+			oset="R"+Integer.toString(lsoffset);
+		}
+		else
+			oset=Integer.toString(lsoffset);
+		String rn="Source Register is R";
+		String rd="Destination Register is R";
+		String x="",y="";
+		for(int i=12;i<16;i++){
+			x+=Integer.toString(i);
+			y+=Integer.toString(i+4);
+		}
+		int x1=binTOdecimal(x);
+		int y1=binTOdecimal(y);
+		rn=rn+Integer.toString(x1);
+		rd=rd+Integer.toString(y1);
 		if(load==1){
-			System.out.println("Operation is Load");
+			System.out.println("Operation is Load"+" "+rn+" "+rd+" offset is "+oset);
 		}
 		else{
-			System.out.println("Operation is Store");
+			System.out.println("Operation is Store"+" "+rn+" "+rd+" offset is "+oset);
 		}
-		System.out.println("dataStore");
+		//System.out.println("dataStore");
+		setMemory(lsoffset);
 	}
-
+	public static void setMemory(int off){
+		
+	}
 	public static void branchCondition() {
 
 		System.out.println("branch condition");
