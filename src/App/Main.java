@@ -449,6 +449,58 @@ public class Main {
 		} else if (num == 1) {
 			System.out.println("No Execution");
 		} else if (num == 2) {
+			int[] sined=new int[32];
+			for(int i=8;i<sined.length;i++) {
+				sined[i]=binary[i];
+			}
+			if(sined[8]==1) {
+				for(int i=0;i<8;i++) {
+					sined[i]=1;
+				}
+			}
+			else {
+				for(int i=0;i<8;i++) {
+					sined[i]=0;
+				}
+			}
+			String sinedPadded="";
+			for(int i=0;i<sined.length;i++) {
+				sinedPadded+=sined[i];
+			}
+			int counter = 0;
+			counter=binTOdecimal(sinedPadded);
+			System.out.println(counter+"offset");
+			if (code == 0) {
+				if (flagEqual == true) {
+					R[15] =counter ;
+				}
+				System.out.println("EXECUTE: BEQ offset :");
+			} else if (code == 1) {
+				if (flagEqual == false) {
+					R[15] = counter;
+				}
+				System.out.println("EXECUTE: BNE offset : " + counter);
+			} else if (code == 10) {
+				if ((flagSmaller == false) || (flagEqual == true))
+					R[15] = counter;
+				System.out.println("EXECUTE: BGE offset : " + counter);
+			} else if (code == 11) {
+				if ((flagSmaller == true) && (flagEqual == false))
+					R[15] = counter;
+				System.out.println("EXECUTE: BLT offset :" + counter);
+			} else if (code == 12) {
+				if ((flagSmaller == false) && (flagEqual == false))
+					R[15] = counter;
+				System.out.println("EXECUTE: BGT offset : " + counter);
+			} else if (code == 13) {
+				if ((flagGreater == true) || (flagEqual == true)) {
+					R[15] = counter;
+				}
+				System.out.println("EXECUTE: BLE offset : " + counter);
+			} else if (code == 14) {
+				R[15] =counter;
+				System.out.println("EXECUTE: BAL offset : " + counter);
+			}
 		}	
 	}
 	public static int binTOdecimal(String s) {
