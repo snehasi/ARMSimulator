@@ -215,20 +215,22 @@ public class Main {
 		System.out.println("branch condition");
 		int num2 = getcond();
 		if (num2 == 0) {
-			System.out.println("Operation is BEQ\n");
+			System.out.println("Operation decoded is BEQ\n");
 		} else if (num2 == 1) {
-			System.out.println("Operation is BNE\n");
-		} else if (num2 == 11) {
-			System.out.println("Operation is BLT\n");
-		} else if (num2 == 13) {
-			System.out.println("Operation is BLE\n");
-		} else if (num2 == 12) {
-			System.out.println("Operation is BGT\n");
+			System.out.println("Operation decoded is BNE\n");
 		} else if (num2 == 10) {
-			System.out.println("Operation is BGE\n");
+			System.out.println("Operation decoded is BGE\n");
+		} else if (num2 == 11) {
+			System.out.println("Operation decoded is BLT\n");
+		} else if (num2 == 12) {
+			System.out.println("Operation decoded is BGT\n");
+		} else if (num2 == 13) {
+			System.out.println("Operation decoded is BLE\n");
 		} else if (num2 == 14) {
-			System.out.println("Operation is BAL\n");
-		}
+			System.out.println("Operation decoded is BAL\n");
+		} else if (num2 == 15) {
+			System.out.println("Operation decoded is B\n");
+		} 
 	}
 	public static void execute() {
 		hexTobinary(instruct.substring(2));
