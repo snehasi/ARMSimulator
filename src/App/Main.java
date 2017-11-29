@@ -48,10 +48,8 @@ public class Main {
 		//int location=Integer.parseInt(x,16);
     	long y=memory[location];
 		address =Integer.toString(location);
-		if(location<10)
-			address="0x"+"0"+address;
-		else
-			address="0x"+address;
+		address=Integer.toHexString(Integer.parseInt(address));
+		address="0x"+address;
 		instruct =Long.toHexString(y).substring(8);
 		instruct="0x"+instruct;
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
