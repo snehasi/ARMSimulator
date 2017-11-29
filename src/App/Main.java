@@ -17,11 +17,13 @@ public class Main {
 	private static int destination=0;
 	private static int[] R=new int[15];
 	/*main memory->we are taking the indices from 0xi as i giving them contiguous allocations in our implementaion now we have to increase R[15] by 4*/
-	private static int[] memory=new int[4000];
+	private static long[] memory=new long[4000];
     public static void main(String[] args) throws IOException {
-		fetch(1);
-		decode();
-		execute();
+    	initialise();
+    	for(int i=0;i<16;i+=4)
+			fetch(i);
+//		decode();
+//		execute();
 	}
 	public static void initialise()throws IOException{//Storing instructions from mem file in our memory
 		BufferedReader in = null;
@@ -31,8 +33,9 @@ public class Main {
 			in = new BufferedReader(new FileReader("./files/simple_add.mem"));
 			while((s=in.readLine())!=null){
 				String[] s2=s.split(" ");
-				location=Integer.parseInt(s2[0].substring(2))/4;//scaled 0x04 to i=1
-				memory[location]=Integer.parseInt(s2[1].substring(2),16);
+				location=Integer.parseInt(s2[0].substring(2),16);
+				System.out.println(s2[1].substring(2)+" "+location);
+				memory[location]=Integer.parseUnsignedInt(s2[1].substring(2),16);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -41,15 +44,17 @@ public class Main {
 				in.close();
 		}
 	}
-	public static void fetch(int x) throws IOException {
-    	int y=memory[x];
-		address =Integer.toString(x);
-		if(x<10)
+	public static void fetch(int location) throws IOException {
+		//int location=Integer.parseInt(x,16);
+    	long y=memory[location];
+		address =Integer.toString(location);
+		if(location<10)
 			address="0x"+"0"+address;
 		else
 			address="0x"+address;
-		instruct =Integer.toHexString(y);
-		System.out.println("FETCH: Fetch instruction 0x" + instruct + " from address " + address);
+		instruct =Long.toHexString(y).substring(8);
+		instruct="0x"+instruct;
+		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
 	public static int getcond() {
 		String command2 = "";
@@ -224,14 +229,16 @@ public class Main {
 		else{
 			System.out.println("Operation is Store"+" "+rn+" "+rd+" offset is "+oset);
 		}
-		//System.out.println("dataStore");
-		setMemory(lsoffset);
+		setMemory(lsoffset,x1,y1);
 	}
-	public static void setMemory(int off){
-		
+	public static void setMemory(int off,int source,int destination){
+		if(off==0){
+
+		}else{
+
+		}
 	}
 	public static void branchCondition() {
-
 		System.out.println("branch condition");
 		int num2 = getcond();
 		if (num2 == 0) {
