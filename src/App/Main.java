@@ -19,7 +19,7 @@ public class Main {
 	/*main memory->we are taking the indices from 0xi as i giving them contiguous allocations in our implementaion now we have to increase R[15] by 4*/
 	private static int[] memory=new int[4000];
     public static void main(String[] args) throws IOException {
-		fetch(1,2);
+		fetch(1);
 		decode();
 		execute();
 	}
@@ -41,14 +41,15 @@ public class Main {
 				in.close();
 		}
 	}
-	public static void fetch(int x,int y) throws IOException {
-			address =Integer.toString(x);
-			if(x<10)
-				address="0x"+"0"+address;
-			else
-				address="0x"+address;
-			instruct =Integer.toHexString(y);
-			System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
+	public static void fetch(int x) throws IOException {
+    	int y=memory[x];
+		address =Integer.toString(x);
+		if(x<10)
+			address="0x"+"0"+address;
+		else
+			address="0x"+address;
+		instruct =Integer.toHexString(y);
+		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
 	public static int getcond() {
 		String command2 = "";
