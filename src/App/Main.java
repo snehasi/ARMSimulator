@@ -1,4 +1,3 @@
-package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,15 +15,18 @@ public class Main {
 	private static int operand2=0;
 	private static int destination=0;
 	private static int[] R=new int[15];
+	private static int iii=0;
 	/*main memory->we are taking the indices from 0xi as i giving them contiguous allocations in our implementaion now we have to increase R[15] by 4*/
-	private static long[] memory=new long[4000];
+	private static long[] memory=new long[8000];
     public static void main(String[] args) throws IOException {
     	int count=initialise();
     	for(int i=0;i<count;i+=4) {
-    		System.out.println(i);
 			fetch(i);
-			//decode();
+			decode();
+			execute();
+			writeback();
 		}
+//		execute();
 	}
 	public static int initialise()throws IOException{//Storing instructions from mem file in our memory
 		BufferedReader in = null;
@@ -37,8 +39,9 @@ public class Main {
 				count++;
 				String[] s2=s.split(" ");
 				location=Integer.parseInt(s2[0].substring(2),16);
+				//System.out.println("loc"+location);
 				memory[location]=Integer.parseUnsignedInt(s2[1].substring(2),16);
-				System.out.println(memory[location]);
+				//System.out.println("xxx"+memory[location]);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -49,14 +52,16 @@ public class Main {
 		return 4*count;
 	}
 	public static void fetch(int location) throws IOException {
-    	long y=memory[location];
-    	System.out.println(y);
+		//int location=Integer.parseInt(x,16);
+		long y=memory[location];
 		address =Integer.toString(location);
+		//System.out.println("testing"+y);
 		address=Integer.toHexString(Integer.parseInt(address));
 		address="0x"+address;
+		
+		//System.out.println(y);
 		instruct =Long.toHexString(y).substring(8);
 		instruct="0x"+instruct;
-		//System.out.println(instruct);
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
 	public static int getcond() {
@@ -80,12 +85,18 @@ public class Main {
 		String offset = "";
 		command = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
 		int num = binTOdecimal(command);
+		System.out.println("DECODE starts");
 		if (num == 0) {
 			dataProcess();
 		} else if (num == 1) {
 			dataStore();
 		} else if (num == 2) {
 			branchCondition();
+		}
+		else if (num == 3) {
+			System.out.println("Exit the program.");
+			resetval();
+			System.exit(0);
 		}
 	}
 	public static int getlsoffset(){//getting load store offset
@@ -109,7 +120,7 @@ public class Main {
 				+ Integer.toString(binary[binary.length - 1 - 14]) + Integer.toString(binary[binary.length - 1 - 13])
 				+ Integer.toString(binary[binary.length - 1 - 12]);
 		destination=binTOdecimal(cmd2);
-		System.out.println(immediate+" "+code);
+		//System.out.println(immediate+" "+code);
 		if (immediate == 0) {
 			String cmd3 = Integer.toString(binary[binary.length - 4])
 					+ Integer.toString(binary[binary.length - 3]) + Integer.toString(binary[binary.length - 2])
@@ -232,35 +243,13 @@ public class Main {
 		else{
 			System.out.println("Operation is Store"+" "+rn+" "+rd+" offset is "+oset);
 		}
-		setMemory(lsoffset,x1,y1,load);
+		setMemory(lsoffset,x1,y1);
 	}
-	public static long getMemory(int x){
-	    String hex=Integer.toHexString(x);
-        int location=Integer.parseUnsignedInt(hex,16);
-        return memory[location];
-    }
-	public static void setMemory(int off,int source,int destination,int load){
-		//TODO Check the bugs
+	public static void setMemory(int off,int source,int destination){
 		if(off==0){
-		    if(load==1) {
-		        long set=getMemory(R[source]);
-                R[destination] = (int)set;
-            }
-		    else
-		        memory[R[(int)getMemory(R[destination])]]=R[source];
+
 		}else{
-            if(load==1){
-                long set=getMemory(R[source]);
-                int temp=(int)set;
-                temp+=off/4;
-                R[destination]=(int)memory[temp];
-            }
-            else{
-                long set=memory[R[(int)getMemory(R[destination])]];
-                int temp=(int)set;
-                temp+=off/4;
-                memory[temp]=R[source];
-            }
+
 		}
 	}
 	public static void branchCondition() {
@@ -503,6 +492,35 @@ public class Main {
 			}
 		}	
 	}
+	public static void writeback() {
+		System.out.println("WRITEBACK starts");
+		hexTobinary(instruct.substring(2));
+		String command3 = "";
+		String offset3 = "";
+		command3 = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
+		int num3 = binTOdecimal(command3);
+		int code3=getOpcode();
+		if(((num3==0)&&(code3!=10))||(num3==1)&&(code3==25)) {			
+				R[destination]=result;
+				System.out.println("Write "+result+" to "+destination);	
+		}
+		else if((num3==1)&&(code3==24)) {			
+			iii=R[destination];
+			System.out.println("Write "+iii+" to memory.");
+			
+		}
+		else if(num3==2||((num3==0)&&(code3==10))) {
+			System.out.println("No writeback.");
+		}
+		else if(num3==3) {
+			System.out.println("Exit the program.");
+			resetval();
+			System.exit(0);
+		}
+		
+	}
+	
+	
 	public static int binTOdecimal(String s) {
 		int decimal = 0;
 		int counter = 0;
@@ -513,10 +531,12 @@ public class Main {
 			counter++;
 		}
 		return decimal;
+
 	}
+
 	public static void hexTobinary(String s) {
 		String bin = "";
-		System.out.println(s);
+		//System.out.println(s);
 		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) == '0') {
 				bin = bin + "0000";
@@ -538,23 +558,43 @@ public class Main {
 				bin = bin + "1000";
 			} else if (s.charAt(i) == '9') {
 				bin = bin + "1001";
-			} else if (s.charAt(i) == 'A'||s.charAt(i)=='a') {
+			} else if (s.charAt(i) == 'A'|| s.charAt(i)=='a') {
 				bin = bin + "1010";
-			} else if (s.charAt(i) == 'B'||s.charAt(i)=='b') {
+			} else if (s.charAt(i) == 'B'|| s.charAt(i)=='b') {
 				bin = bin + "1011";
-			} else if (s.charAt(i) == 'C'||s.charAt(i)=='c') {
+			} else if (s.charAt(i) == 'C'|| s.charAt(i)=='c') {
 				bin = bin + "1100";
-			} else if (s.charAt(i) == 'D'||s.charAt(i)=='d') {
+			} else if (s.charAt(i) == 'D'|| s.charAt(i)=='d') {
 				bin = bin + "1101";
-			} else if (s.charAt(i) == 'E'||s.charAt(i)=='e') {
+			} else if (s.charAt(i) == 'E'|| s.charAt(i)=='e') {
 				bin = bin + "1110";
-			} else if (s.charAt(i) == 'F'||s.charAt(i)=='f') {
+			} else if (s.charAt(i) == 'F'|| s.charAt(i)=='f') {
 				bin = bin + "1111";
 			}
 		}
-		System.out.println(bin);
+		//System.out.println(bin);
 		for (int i = 0; i < bin.length(); i++) {
 			binary[i] = bin.charAt(i) - '0';
 		}
+	}
+	
+	public static void resetval() {
+		for(int i=0;i<10;i++) {
+			instruction[i]='0';
+		}
+		for(int j=0;j<32;j++) {
+			binary[j]=0;
+		}
+		for(int i=0;i<15;i++) {
+			R[i]=0;
+		}
+		operand1=operand2=destination=iii=result=0;
+		address=instruct="";
+		flagEqual=flagGreater=flagSmaller=false;
+		for(int i=0;i<8000;i++) {
+			memory[i]=0;
+		}
+		
+		
 	}
 }
