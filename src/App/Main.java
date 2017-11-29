@@ -1,8 +1,8 @@
+package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
 public class Main {
 	private static char[] instruction = new char[10];
 	private static String address = "";
@@ -16,34 +16,40 @@ public class Main {
 	private static int operand2=0;
 	private static int destination=0;
 	private static int[] R=new int[15];
-	
-	public static void main(String[] args) throws IOException {
-		fetch();
+	/*main memory->we are taking the indices from 0xi as i giving them contiguous allocations in our implementaion now we have to increase R[15] by 4*/
+	private static int[] memory=new int[4000];
+    public static void main(String[] args) throws IOException {
+		fetch(1,2);
 		decode();
 		execute();
 	}
-
-	public static void fetch() throws IOException {
+	public static void initialise()throws IOException{//Storing instructions from mem file in our memory
 		BufferedReader in = null;
+		int location=0;
 		String s = null;
 		try {
-			// in = new BufferedReader(new
-			// FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
-			in = new BufferedReader(new FileReader("D:\\i.MEM"));
-			s = in.readLine();
+			in = new BufferedReader(new FileReader("./files/simple_add.mem"));
+			while((s=in.readLine())!=null){
+				String[] s2=s.split(" ");
+				location=Integer.parseInt(s2[0].substring(2))/4;//scaled 0x04 to i=1
+				memory[location]=Integer.parseInt(s2[1].substring(2),16);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}finally {
+			if (in != null)
+				in.close();
 		}
-		for (int i = 0; i < 3; i++) {
-			address = address + s.charAt(i);
-		}
-		for (int i = 4; i < s.length(); i++) {
-			instruction[i - 4] = s.charAt(i);
-			instruct = instruct + s.charAt(i);
-		}
-		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
-
+	public static void fetch(int x,int y) throws IOException {
+			address =Integer.toString(x);
+			if(x<10)
+				address="0x"+"0"+address;
+			else
+				address="0x"+address;
+			instruct =Integer.toHexString(y);
+			System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
+	}
 	public static int getcond() {
 		String command2 = "";
 		command2 = binary[binary.length - 1 - 31] + binary[binary.length - 1 - 30] + binary[binary.length - 1 - 29]
@@ -51,7 +57,6 @@ public class Main {
 		int num2 = binTOdecimal(command2);
 		return num2;
 	}
-
 	public static int getOpcode() {
 		String command2 = "";
 		command2 = Integer.toString(binary[binary.length - 1 - 24]) + Integer.toString(binary[binary.length - 1 - 23]) + Integer.toString(binary[binary.length - 1 - 22])
