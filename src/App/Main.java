@@ -21,10 +21,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
     	int count=initialise();
     	for(int i=0;i<count;i+=4) {
+    		System.out.println(i);
 			fetch(i);
 			decode();
 		}
-//		execute();
 	}
 	public static int initialise()throws IOException{//Storing instructions from mem file in our memory
 		BufferedReader in = null;
@@ -38,6 +38,7 @@ public class Main {
 				String[] s2=s.split(" ");
 				location=Integer.parseInt(s2[0].substring(2),16);
 				memory[location]=Integer.parseUnsignedInt(s2[1].substring(2),16);
+				System.out.println(memory[location]);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -48,13 +49,14 @@ public class Main {
 		return 4*count;
 	}
 	public static void fetch(int location) throws IOException {
-		//int location=Integer.parseInt(x,16);
     	long y=memory[location];
+    	System.out.println(y);
 		address =Integer.toString(location);
 		address=Integer.toHexString(Integer.parseInt(address));
 		address="0x"+address;
 		instruct =Long.toHexString(y).substring(8);
 		instruct="0x"+instruct;
+		//System.out.println(instruct);
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
 	public static int getcond() {
@@ -464,17 +466,17 @@ public class Main {
 				bin = bin + "1000";
 			} else if (s.charAt(i) == '9') {
 				bin = bin + "1001";
-			} else if (s.charAt(i) == 'A') {
+			} else if (s.charAt(i) == 'A'||s.charAt(i)=='a') {
 				bin = bin + "1010";
-			} else if (s.charAt(i) == 'B') {
+			} else if (s.charAt(i) == 'B'||s.charAt(i)=='b') {
 				bin = bin + "1011";
-			} else if (s.charAt(i) == 'C') {
+			} else if (s.charAt(i) == 'C'||s.charAt(i)=='c') {
 				bin = bin + "1100";
-			} else if (s.charAt(i) == 'D') {
+			} else if (s.charAt(i) == 'D'||s.charAt(i)=='d') {
 				bin = bin + "1101";
-			} else if (s.charAt(i) == 'E') {
+			} else if (s.charAt(i) == 'E'||s.charAt(i)=='e') {
 				bin = bin + "1110";
-			} else if (s.charAt(i) == 'F') {
+			} else if (s.charAt(i) == 'F'||s.charAt(i)=='f') {
 				bin = bin + "1111";
 			}
 		}
