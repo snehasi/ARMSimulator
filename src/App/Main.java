@@ -247,17 +247,15 @@ public class Main {
                 R[destination] = (int)set;
             }
 		    else
-		        memory[R[(int)getMemory(R[destination])]]=R[source];
+		        memory[R[destination]]=R[source];
 		}else{
             if(load==1){
-                long set=getMemory(R[source]);
-                int temp=(int)set;
+                int temp=R[source];
                 temp+=off/4;
                 R[destination]=(int)memory[temp];
             }
             else{
-                long set=memory[R[(int)getMemory(R[destination])]];
-                int temp=(int)set;
+                int temp=R[destination];
                 temp+=off/4;
                 memory[temp]=R[source];
             }
