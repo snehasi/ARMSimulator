@@ -1,4 +1,3 @@
-package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,17 +7,28 @@ public class Main {
 	private static char[] instruction = new char[10];
 	private static String address = "";
 	private static String instruct = "";
-	private static int[] binary=new int[32];
+	private static int[] binary = new int[32];
+	private static int result=0;
+	private static boolean flagEqual=false;
+	private static boolean flagGreater=false;
+	private static boolean flagSmaller=false;
+	private static int operand1=0;
+	private static int operand2=0;
+	private static int destination=0;
+	private static int[] R=new int[15];
+	
 	public static void main(String[] args) throws IOException {
 		fetch();
 		decode();
+		execute();
 	}
 
 	public static void fetch() throws IOException {
 		BufferedReader in = null;
 		String s = null;
 		try {
-//			in = new BufferedReader(new FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
+			// in = new BufferedReader(new
+			// FileReader("//Users//snehasi//eclipse-workspace//COArmsimulator//test.mem//"));
 			in = new BufferedReader(new FileReader("D:\\i.MEM"));
 			s = in.readLine();
 		} catch (FileNotFoundException e) {
@@ -33,19 +43,38 @@ public class Main {
 		}
 		System.out.println("FETCH: Fetch instruction " + instruct + " from address " + address);
 	}
+
 	public static int getcond() {
-		String command2="";
-		command2=binary[binary.length-1-31]+binary[binary.length-1-30]+binary[binary.length-1-29]+binary[binary.length-1-28]+"";
-		int num2=binTOdecimal(command2);
+		String command2 = "";
+		command2 = binary[binary.length - 1 - 31] + binary[binary.length - 1 - 30] + binary[binary.length - 1 - 29]
+				+ binary[binary.length - 1 - 28] + "";
+		int num2 = binTOdecimal(command2);
 		return num2;
 	}
+
 	public static int getOpcode() {
-		String command2="";
-		command2=binary[binary.length-1-24]+binary[binary.length-1-23]+binary[binary.length-1-22]+binary[binary.length-1-21]+"";
-		int num2=binTOdecimal(command2);
+		String command2 = "";
+		command2 = Integer.toString(binary[binary.length - 1 - 24]) + Integer.toString(binary[binary.length - 1 - 23]) + Integer.toString(binary[binary.length - 1 - 22])
+				+ Integer.toString(binary[binary.length - 1 - 21]);
+		int num2 = binTOdecimal(command2);
 		return num2;
 	}
-	public int getlsoffset(){//getting load store offset
+
+	public static void decode() {
+		hexTobinary(instruct.substring(2));
+		String command = "";
+		String offset = "";
+		command = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
+		int num = binTOdecimal(command);
+		if (num == 0) {
+			dataProcess();
+		} else if (num == 1) {
+			dataStore();
+		} else if (num == 2) {
+			branchCondition();
+		}
+	}
+	public static int getlsoffset(){//getting load store offset
 		String offset="";
 		for(int i=31;i>19;i--){
 			offset=Integer.toString(binary[i]);
@@ -53,39 +82,25 @@ public class Main {
 		int decimaloffset=binTOdecimal(offset);
 		return decimaloffset;
 	}
-	public void decode() {
-		hexTobinary(instruct.substring(2));
-		String command="";
-		command=Integer.toString(binary[binary.length-1-27])+Integer.toString(binary[binary.length-1-26]);
-		int num=binTOdecimal(command);
-		if(num==0) {
-			dataProcess();
-		}
-		else if(num==1) {
-			dataStore();
-		}
-		else if(num==2){
-			branchCondition();
-		}
-	}
-	public void dataProcess() {
+
+	public static void dataProcess() {
 		System.out.println("dataProcess");
 		int immediate = binary[6];
 		int code = getOpcode();
 		String cmd1 = Integer.toString(binary[binary.length - 1 - 19])
 				+ Integer.toString(binary[binary.length - 1 - 18]) + Integer.toString(binary[binary.length - 1 - 17])
 				+ Integer.toString(binary[binary.length - 1 - 16]);
-		int operand1=binTOdecimal(cmd1);
+		operand1=binTOdecimal(cmd1);
 		String cmd2 = Integer.toString(binary[binary.length - 1 - 15])
 				+ Integer.toString(binary[binary.length - 1 - 14]) + Integer.toString(binary[binary.length - 1 - 13])
 				+ Integer.toString(binary[binary.length - 1 - 12]);
-		int destination=binTOdecimal(cmd2);
+		destination=binTOdecimal(cmd2);
 		System.out.println(immediate+" "+code);
 		if (immediate == 0) {
 			String cmd3 = Integer.toString(binary[binary.length - 4])
 					+ Integer.toString(binary[binary.length - 3]) + Integer.toString(binary[binary.length - 2])
 					+ Integer.toString(binary[binary.length - 1]);
-			int operand2=binTOdecimal(cmd3);
+			operand2=binTOdecimal(cmd3);
 			if (code == 0) {
 				System.out.println("Operation decoded is AND, First Operand is R"+operand1+",Second Operand is R"+operand2+",Destination Register is R"+destination);
 			}
@@ -131,7 +146,7 @@ public class Main {
 					+ Integer.toString(binary[binary.length - 5])+Integer.toString(binary[binary.length - 4])
 					+ Integer.toString(binary[binary.length - 3]) + Integer.toString(binary[binary.length - 2])
 					+ Integer.toString(binary[binary.length - 1]);
-			int operand2=binTOdecimal(cmd3);
+			operand2=binTOdecimal(cmd3);
 			if (code == 0) {
 				System.out.println("Operation decoded is AND, First Operand is R"+operand1+",Immediate Second Operand is "+operand2+",Destination Register is R"+destination);
 			}
@@ -174,7 +189,9 @@ public class Main {
 			
 		}
 	}
-	public void dataStore() {
+
+	public static void dataStore() {
+		System.out.println("dataStore");
 		int offset=getlsoffset();
 		int load=binary[11];
 		//TODO FIND RL AND RD
@@ -186,31 +203,193 @@ public class Main {
 		}
 		System.out.println("dataStore");
 	}
-	public void branchCondition() {
-	
+
+	public static void branchCondition() {
+
 		System.out.println("branch condition");
-		int num2=getcond();
-		if(num2==0) {
+		int num2 = getcond();
+		if (num2 == 0) {
 			System.out.println("Operation is BEQ\n");
-		}
-		else if(num2==1) {
+		} else if (num2 == 1) {
 			System.out.println("Operation is BNE\n");
-		}
-		else if(num2==11) {
+		} else if (num2 == 11) {
 			System.out.println("Operation is BLT\n");
-		}
-		else if(num2==13) {
+		} else if (num2 == 13) {
 			System.out.println("Operation is BLE\n");
-		}
-		else if(num2==12) {
+		} else if (num2 == 12) {
 			System.out.println("Operation is BGT\n");
-		}
-		else if(num2==10) {
+		} else if (num2 == 10) {
 			System.out.println("Operation is BGE\n");
-		}
-		else if(num2==14) {
+		} else if (num2 == 14) {
 			System.out.println("Operation is BAL\n");
 		}
+	}
+	public static void execute() {
+		hexTobinary(instruct.substring(2));
+		String command = "";
+		String offset = "";
+		command = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
+		int num = binTOdecimal(command);
+		int code=getOpcode();
+		if (num == 0) {
+			int immidiate=binary[6];
+			if(immidiate==0) {
+				if (code == 0) {
+					result=(R[operand1])&(R[operand2]);
+					System.out.println("Execute: And "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==1) {
+					result=(R[operand1])^(R[operand2]);
+					System.out.println("Execute: XOR "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==2) {
+					result=R[operand1]-R[operand2];
+					System.out.println("Execute: SUB "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==3) {
+					result=R[operand2]-R[operand1];
+					System.out.println("Execute: RSB "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==4) {
+					result=R[operand1]+R[operand2];
+					System.out.println("Execute: ADD "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==5) {
+					result=R[operand1]+R[operand2];
+					System.out.println("Execute: ADC "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==6) {
+					result=R[operand1]-R[operand2]-1;
+					System.out.println("Execute: SB "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==10) {
+					if(R[operand1]==R[operand2]) {
+						result=0;
+						flagEqual=true;
+					}
+					else if(R[operand1]>R[operand2]) {
+						result=1;
+						flagGreater=true;
+					}
+					else {
+						result=-1;
+						flagSmaller=true;
+					}
+					System.out.println("Execute: CMP "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==11) {
+					if(R[operand1]==R[operand2]) {
+						result=0;
+						flagEqual=true;
+					}
+					else if(R[operand1]>R[operand2]) {
+						result=-1;
+						flagSmaller=true;
+					}
+					else {
+						result=1;
+						flagGreater=true;
+					}
+					System.out.println("Execute: CMN "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==12) {
+					result=(R[operand1])|(R[operand2]);
+					System.out.println("Execute: ORR "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==13) {
+					result=R[operand2];
+					System.out.println("Execute: MOV "+R[operand2]);
+				}
+				else if(code==14) {
+					result=(R[operand1])&(~(R[operand2]));
+					System.out.println("Execute: BIC "+ R[operand1]+" "+R[operand2]);
+				}
+				else if(code==15) {
+					result=~(R[operand2]);
+					System.out.println("Execute: MVN "+R[operand2]);
+				}
+			}
+			else {
+				if (code == 0) {
+					result=(R[operand1])&(operand2);
+					System.out.println("Execute: AND Immediate "+ R[operand1]+" "+operand2);
+				}
+				else if(code==1) {
+					result=(R[operand1])^(operand2);
+					System.out.println("Execute: XOR Immediate "+ R[operand1]+" "+operand2);
+				}
+				else if(code==2) {
+					result=R[operand1]-operand2;
+					System.out.println("Execute: SUB Immediate "+ R[operand1]+" "+operand2);
+				}
+				else if(code==3) {
+					result=R[operand2]-operand1;
+					System.out.println("Execute: RSB Immediate "+ operand1+" "+R[operand2]);
+				}
+				else if(code==4) {
+					result=R[operand1]+operand2;
+					System.out.println("Execute: ADD Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==5) {
+					result=R[operand1]+operand2;
+					System.out.println("Execute: ADC  Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==6) {
+					result=R[operand1]-operand2-1;
+					System.out.println("Execute: SB Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==10) {
+					if(R[operand1]==operand2) {
+						result=0;
+						flagEqual=true;
+					}
+					else if(R[operand1]>operand2) {
+						result=1;
+						flagGreater=true;
+					}
+					else {
+						result=-1;
+						flagSmaller=true;
+					}
+					System.out.println("Execute: CMP Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==11) {
+					if(operand1==R[operand2]) {
+						result=0;
+						flagEqual=true;
+					}
+					else if(operand1>R[operand2]) {
+						result=-1;
+						flagSmaller=true;
+					}
+					else {
+						result=1;
+						flagGreater=true;
+					}
+					System.out.println("Execute: CMN Immediate"+ operand1+" "+R[operand2]);
+				}
+				else if(code==12) {
+					result=(R[operand1])|(operand2);
+					System.out.println("Execute: ORR Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==13) {
+					result=operand2;
+					System.out.println("Execute: MOV Immediate"+operand2);
+				}
+				else if(code==14) {
+					result=(R[operand1])&(~(operand2));
+					System.out.println("Execute: BIC Immediate"+ R[operand1]+" "+operand2);
+				}
+				else if(code==15) {
+					result=~(operand2);
+					System.out.println("Execute: MVN Immediate"+operand2);
+				}
+				
+			}
+		} else if (num == 1) {
+			System.out.println("No Execution");
+		} else if (num == 2) {
+		}	
 	}
 	public static int binTOdecimal(String s) {
 		int decimal = 0;
@@ -224,15 +403,7 @@ public class Main {
 		return decimal;
 
 	}
-	public void memory(int x,int y){
 
-	}
-	public void writeback(int x,int y){
-
-	}
-	public void execute(){
-
-	}
 	public static void hexTobinary(String s) {
 		String bin = "";
 		System.out.println(s);
@@ -273,7 +444,7 @@ public class Main {
 		}
 		System.out.println(bin);
 		for (int i = 0; i < bin.length(); i++) {
-			binary[i] = bin.charAt(i)-'0';
+			binary[i] = bin.charAt(i) - '0';
 		}
 	}
 }
