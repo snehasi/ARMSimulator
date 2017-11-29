@@ -19,22 +19,24 @@ public class Main {
 	/*main memory->we are taking the indices from 0xi as i giving them contiguous allocations in our implementaion now we have to increase R[15] by 4*/
 	private static long[] memory=new long[4000];
     public static void main(String[] args) throws IOException {
-    	initialise();
-    	for(int i=0;i<16;i+=4)
+    	int count=initialise();
+    	for(int i=0;i<count;i+=4) {
 			fetch(i);
-//		decode();
+			decode();
+		}
 //		execute();
 	}
-	public static void initialise()throws IOException{//Storing instructions from mem file in our memory
+	public static int initialise()throws IOException{//Storing instructions from mem file in our memory
 		BufferedReader in = null;
 		int location=0;
 		String s = null;
+		int count=0;
 		try {
 			in = new BufferedReader(new FileReader("./files/simple_add.mem"));
 			while((s=in.readLine())!=null){
+				count++;
 				String[] s2=s.split(" ");
 				location=Integer.parseInt(s2[0].substring(2),16);
-				System.out.println(s2[1].substring(2)+" "+location);
 				memory[location]=Integer.parseUnsignedInt(s2[1].substring(2),16);
 			}
 		} catch (FileNotFoundException e) {
@@ -43,6 +45,7 @@ public class Main {
 			if (in != null)
 				in.close();
 		}
+		return 4*count;
 	}
 	public static void fetch(int location) throws IOException {
 		//int location=Integer.parseInt(x,16);
