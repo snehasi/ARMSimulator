@@ -23,7 +23,7 @@ public class Main {
     	for(int i=0;i<count;i+=4) {
     		System.out.println(i);
 			fetch(i);
-			decode();
+			//decode();
 		}
 	}
 	public static int initialise()throws IOException{//Storing instructions from mem file in our memory
@@ -232,13 +232,35 @@ public class Main {
 		else{
 			System.out.println("Operation is Store"+" "+rn+" "+rd+" offset is "+oset);
 		}
-		setMemory(lsoffset,x1,y1);
+		setMemory(lsoffset,x1,y1,load);
 	}
-	public static void setMemory(int off,int source,int destination){
+	public static long getMemory(int x){
+	    String hex=Integer.toHexString(x);
+        int location=Integer.parseUnsignedInt(hex,16);
+        return memory[location];
+    }
+	public static void setMemory(int off,int source,int destination,int load){
+		//TODO Check the bugs
 		if(off==0){
-
+		    if(load==1) {
+		        long set=getMemory(R[source]);
+                R[destination] = (int)set;
+            }
+		    else
+		        memory[R[(int)getMemory(R[destination])]]=R[source];
 		}else{
-
+            if(load==1){
+                long set=getMemory(R[source]);
+                int temp=(int)set;
+                temp+=off/4;
+                R[destination]=(int)memory[temp];
+            }
+            else{
+                long set=memory[R[(int)getMemory(R[destination])]];
+                int temp=(int)set;
+                temp+=off/4;
+                memory[temp]=R[source];
+            }
 		}
 	}
 	public static void branchCondition() {
@@ -439,9 +461,7 @@ public class Main {
 			counter++;
 		}
 		return decimal;
-
 	}
-
 	public static void hexTobinary(String s) {
 		String bin = "";
 		System.out.println(s);
