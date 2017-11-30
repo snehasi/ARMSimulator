@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
@@ -114,9 +115,22 @@ public class Main {
 		} else if (num == 2) {
 			branchCondition();
 		} else if (num == 3) {
-			System.out.println("Exit the program.");
-			resetval();
-			System.exit(0);
+			//exit EF000011, print EF00006B, read EF00006c
+			if(instruct.substring(0).equals("0xef000011")) {
+				System.out.println("Exit the program.");
+				resetval();
+				System.exit(0);
+			}
+			else if(instruct.substring(0).equals("0xef00006c")) {
+				Scanner inputt = new Scanner (System.in);
+				System.out.print("Give user input : ");
+				long x = inputt.nextLong();
+				R[0]=x;
+			}
+			else if(instruct.substring(0).equals("0xef00006b")) {
+				System.out.println("Value stored in R[1] is printed: "+R[1]);
+			}
+			
 		}
 	}
 
