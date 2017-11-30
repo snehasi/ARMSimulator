@@ -1,3 +1,4 @@
+package App;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,6 +21,7 @@ public class Main {
 	private static long[] R = new long[16];
 	private static long iii = 0;
 	private static long[] memory = new long[8000];
+	private static long[] mainmemory=new long[8000];
 	/*
 	 * main memory->we are taking the indices from 0xi as i giving them contiguous
 	 * allocations in our implementaion now we have to increase R[15] by 4
@@ -119,16 +121,6 @@ public class Main {
 			System.exit(0);
 		}
 	}
-
-	public static long getlsoffset() {// getting load store offset
-		String offset = "";
-		for (int i = 31; i > 19; i--) {
-			offset = Integer.toString(binary[i]);
-		}
-		long decimaloffset = binTOdecimal(offset);
-		return decimaloffset;
-	}
-
 	public static void dataProcess() {
 		System.out.println(" dataProcess");
 		int immediate = binary[6];
@@ -268,39 +260,65 @@ public class Main {
 	public static long getMemory(int x) {
 		String hex = Integer.toHexString(x);
 		int location = Integer.parseUnsignedInt(hex, 16);
-		return memory[location];
+		return mainmemory[location];
 	}
-
-	public static void Memory() {
-		System.out.print("Memory :");
+    public static long getlsoffset() {// getting load store offset
+        String offset = "";
+        for (int i = 20; i < 32; i++) {
+            offset += Integer.toString(binary[i]);
+            //System.out.print(binary[i]);
+        }
+        //System.out.println();
+        long decimaloffset = Integer.parseUnsignedInt(offset,2);
+        //System.out.println(decimaloffset);
+        return decimaloffset;
+    }
+    public static void Memory() {
+//	    String s="11100101100000100001001111001000";
+//	    for(int i=0;i<s.length();i++){
+//	        binary[i]=Integer.parseInt(s.substring(i,i+1));
+//        }
+//        R[1]=44;
+//        R[2]=565;
+       // mainmemory[44+(968/4)]=565;
 		String command = "";
 		command = Integer.toString(binary[binary.length - 1 - 27]) + Integer.toString(binary[binary.length - 1 - 26]);
 		long num = binTOdecimal(command);
 		if (num == 1) {
+            System.out.print("Memory :");
 			long off = getlsoffset();
 			String x = "", y = "";
 			for (int i = 12; i < 16; i++) {
-				x += Integer.toString(binary[i]);
-				y += Integer.toString(binary[i + 4]);
+				x += Integer.toString(binary[i]);//source
+				y += Integer.toString(binary[i + 4]);//destination
 			}
 			long source = binTOdecimal(x);
 			long destination = binTOdecimal(y);
 			int load = binary[11];
+			if(load==1)
+                System.out.println(" Command is Load");
+			else
+                System.out.println(" Command is Store");
 			if (off == 0) {
 				if (load == 1) {
 					long set = getMemory((int) R[(int) source]);
 					R[(int) destination] = (int) set;
-				} else
-					memory[(int) R[(int) destination]] = R[(int) source];
+					System.out.println("Source Memory :"+(int)set+" Destination Register R"+(int)destination+" : "+R[(int)destination]);
+				} else {
+                    mainmemory[(int) R[(int) destination]] = R[(int) source];
+                    System.out.println("Source Register R"+source+" : "+R[(int)source]+" Destination Memory "+(int) R[(int) destination]+" : "+mainmemory[(int) R[(int) destination]]);
+                }
 			} else {
 				if (load == 1) {
 					int temp = (int) R[(int) source];
 					temp += off / 4;
-					R[(int) destination] = (int) memory[temp];
+					R[(int) destination] = (int) mainmemory[temp];
+                    System.out.println("Source Memory :"+(int)mainmemory[temp]+" Destination Register R"+(int)destination+" : "+R[(int)destination]);
 				} else {
 					int temp = (int) R[(int) destination];
 					temp += off / 4;
-					memory[temp] = R[(int) source];
+					mainmemory[temp] = R[(int) source];
+                    System.out.println("Source Register R"+source+" : "+R[(int)source]+" Destination Memory "+temp+" : "+mainmemory[temp]);
 				}
 			}
 		} else {
